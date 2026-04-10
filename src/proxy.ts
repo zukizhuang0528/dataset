@@ -1,5 +1,5 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
 const isProtectedRoute = createRouteMatcher(['/dashboard(.*)']);
 const isAdminPreviewRoute = createRouteMatcher([
@@ -13,9 +13,15 @@ const isAdminPreviewRoute = createRouteMatcher([
   '/dashboard/vendors(.*)'
 ]);
 
-export default clerkMiddleware(async (auth, req: NextRequest) => {
-  if (isProtectedRoute(req) && !isAdminPreviewRoute(req)) await auth.protect();
-});
+const clerkEnabled = process.env.NEXT_PUBLIC_ENABLE_CLERK === 'true';
+
+export default clerkEnabled
+  ? clerkMiddleware(async (auth, req: NextRequest) => {
+      if (isProtectedRoute(req) && !isAdminPreviewRoute(req)) await auth.protect();
+    })
+  : function proxy() {
+      return NextResponse.next();
+    };
 export const config = {
   matcher: [
     // Skip Next.js internals and all static files, unless found in search params

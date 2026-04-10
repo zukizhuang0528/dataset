@@ -15,6 +15,7 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table';
+import { TableActionButton } from '@/components/ui/table-action-button';
 import { Icons } from '@/components/icons';
 import { cn } from '@/lib/utils';
 
@@ -241,15 +242,30 @@ export default function DatasetListingPage() {
                     </TableCell>
                     <TableCell>
                       <div className='flex justify-end gap-2'>
-                        <Button variant='ghost' asChild>
-                          <Link href={`/dashboard/datasets/${dataset.id}`}>Open</Link>
-                        </Button>
-                        <Button
+                        <TableActionButton
+                          label='Open dataset'
+                          icon={<Icons.externalLink className='size-4' />}
                           asChild
-                          className='bg-brand-gradient border-transparent text-white shadow-primary/20 hover:opacity-95'
                         >
-                          <Link href={`/dashboard/datasets/${dataset.id}`}>Review</Link>
-                        </Button>
+                          <Link
+                            href={`/dashboard/datasets/${dataset.id}`}
+                            aria-label='Open dataset'
+                          >
+                            <Icons.externalLink className='size-4' />
+                          </Link>
+                        </TableActionButton>
+                        <TableActionButton
+                          label='Review dataset'
+                          icon={<Icons.eyeOff className='size-4' />}
+                          asChild
+                        >
+                          <Link
+                            href={`/dashboard/datasets/${dataset.id}`}
+                            aria-label='Review dataset'
+                          >
+                            <Icons.eyeOff className='size-4' />
+                          </Link>
+                        </TableActionButton>
                       </div>
                     </TableCell>
                   </TableRow>

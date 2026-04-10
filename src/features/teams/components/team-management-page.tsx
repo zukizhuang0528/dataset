@@ -17,6 +17,7 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table';
+import { TableActionButton } from '@/components/ui/table-action-button';
 import { cn } from '@/lib/utils';
 import { Icons } from '@/components/icons';
 
@@ -273,12 +274,10 @@ export default function TeamManagementPage() {
                       </span>
                     </TableCell>
                     <TableCell>
-                      <button
-                        type='button'
-                        className='text-red-500 hover:text-red-600 text-sm font-medium'
-                      >
-                        Delete
-                      </button>
+                      <TableActionButton
+                        label='Delete member'
+                        icon={<Icons.trash className='size-4' />}
+                      />
                     </TableCell>
                   </TableRow>
                 ))}

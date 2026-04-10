@@ -26,6 +26,7 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table';
+import { TableActionButton } from '@/components/ui/table-action-button';
 import { cn } from '@/lib/utils';
 import { Icons } from '@/components/icons';
 
@@ -859,25 +860,18 @@ export default function UserManagementPage() {
                   </span>
                 </TableCell>
                 <TableCell className='pr-6'>
-                  <div className='flex items-center gap-2'>
-                    <Button
-                      variant='ghost'
-                      size='sm'
-                      className='rounded-lg'
+                  <div className='flex flex-wrap items-center gap-2'>
+                    <TableActionButton
+                      label='Disable user'
+                      icon={<Icons.circleX className='size-4' />}
                       disabled={user.status === 'Disabled'}
                       onClick={() => handleSingleDisable(user.id)}
-                    >
-                      <Icons.circleX className='size-4' />
-                      Disable
-                    </Button>
-                    <Button variant='ghost' size='sm' className='rounded-lg'>
-                      <Icons.edit className='size-4' />
-                      Edit
-                    </Button>
-                    <Button variant='ghost' size='sm' className='rounded-lg'>
-                      <Icons.externalLink className='size-4' />
-                      View
-                    </Button>
+                    />
+                    <TableActionButton label='Edit user' icon={<Icons.edit className='size-4' />} />
+                    <TableActionButton
+                      label='View user'
+                      icon={<Icons.externalLink className='size-4' />}
+                    />
                   </div>
                 </TableCell>
               </TableRow>

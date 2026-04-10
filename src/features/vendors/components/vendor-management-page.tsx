@@ -29,6 +29,7 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table';
+import { TableActionButton } from '@/components/ui/table-action-button';
 import { cn } from '@/lib/utils';
 import {
   annotationSpecialtyOptions,
@@ -459,32 +460,25 @@ export default function VendorManagementPage() {
                         </div>
                       </TableCell>
                       <TableCell className='min-w-[240px] pr-6'>
-                        <div className='flex items-center justify-start gap-2'>
+                        <div className='flex flex-wrap items-center justify-start gap-2'>
                           {vendor.reviewStatus !== 'Approved' ? (
-                            <Button
-                              size='sm'
-                              className='bg-primary h-8 rounded-lg border-transparent px-3 text-white shadow-none hover:bg-primary/90'
-                            >
-                              Approve
-                            </Button>
+                            <TableActionButton
+                              label='Approve vendor'
+                              icon={<Icons.check className='size-4' />}
+                              className='bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
+                            />
                           ) : null}
                           {vendor.reviewStatus !== 'Rejected' ? (
-                            <Button
-                              variant='outline'
-                              size='sm'
-                              className='h-8 rounded-lg border-red-200 bg-red-50 px-3 text-red-600 hover:bg-red-100'
-                            >
-                              Reject
-                            </Button>
+                            <TableActionButton
+                              label='Reject vendor'
+                              icon={<Icons.circleX className='size-4' />}
+                              className='bg-red-50 text-red-600 hover:bg-red-100'
+                            />
                           ) : null}
-                          <Button
-                            variant='outline'
-                            size='sm'
-                            className='h-8 rounded-lg px-3'
-                            aria-label={`View ${vendor.companyName}`}
-                          >
-                            View
-                          </Button>
+                          <TableActionButton
+                            label={`View ${vendor.companyName}`}
+                            icon={<Icons.externalLink className='size-4' />}
+                          />
                         </div>
                       </TableCell>
                     </TableRow>

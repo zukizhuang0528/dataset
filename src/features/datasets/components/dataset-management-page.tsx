@@ -19,13 +19,6 @@ import {
   DialogHeader,
   DialogTitle
 } from '@/components/ui/dialog';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import {
   Select,
@@ -43,6 +36,7 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table';
+import { TableActionButton } from '@/components/ui/table-action-button';
 import { cn } from '@/lib/utils';
 import {
   datasetFilterOptions,
@@ -300,57 +294,40 @@ export default function DatasetManagementPage() {
                   </div>
                 </TableCell>
                 <TableCell className='pr-6'>
-                  <div className='flex items-center gap-3'>
-                    <Button
-                      variant='ghost'
-                      size='sm'
+                  <div className='flex flex-wrap items-center gap-2'>
+                    <TableActionButton
+                      label='View details'
+                      icon={<Icons.externalLink className='size-4' />}
                       asChild
-                      className='h-auto rounded-lg px-0 text-primary hover:bg-transparent hover:text-primary/80'
                     >
-                      <Link href={`/dashboard/datasets/${dataset.id}`}>View Details</Link>
-                    </Button>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild disabled={!dataset.canManage}>
-                        <Button
-                          variant='ghost'
-                          size='sm'
-                          className={cn(
-                            'h-auto rounded-lg px-2 text-primary hover:bg-primary/5',
-                            !dataset.canManage && 'text-slate-400 hover:bg-transparent'
-                          )}
-                        >
-                          More
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent
-                        align='end'
-                        className='w-48 rounded-xl border border-border/80 shadow-sm'
-                      >
-                        <DropdownMenuItem onClick={() => openDialog('edit', dataset)}>
-                          Edit dataset info
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          disabled={!dataset.cloneAllowed}
-                          onClick={() => openDialog('clone', dataset)}
-                        >
-                          Clone dataset
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          disabled={!dataset.appendAllowed}
-                          onClick={() => openDialog('append', dataset)}
-                        >
-                          Append data
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem
-                          disabled={!dataset.deleteAllowed}
-                          className='text-red-600 focus:text-red-600'
-                          onClick={() => openDialog('delete', dataset)}
-                        >
-                          Delete dataset
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                      <Link href={`/dashboard/datasets/${dataset.id}`} aria-label='View details'>
+                        <Icons.externalLink className='size-4' />
+                      </Link>
+                    </TableActionButton>
+                    <TableActionButton
+                      label='Edit dataset info'
+                      icon={<Icons.edit className='size-4' />}
+                      disabled={!dataset.canManage}
+                      onClick={() => openDialog('edit', dataset)}
+                    />
+                    <TableActionButton
+                      label='Clone dataset'
+                      icon={<Icons.share className='size-4' />}
+                      disabled={!dataset.cloneAllowed}
+                      onClick={() => openDialog('clone', dataset)}
+                    />
+                    <TableActionButton
+                      label='Append data'
+                      icon={<Icons.add className='size-4' />}
+                      disabled={!dataset.appendAllowed}
+                      onClick={() => openDialog('append', dataset)}
+                    />
+                    <TableActionButton
+                      label='Delete dataset'
+                      icon={<Icons.trash className='size-4' />}
+                      disabled={!dataset.deleteAllowed}
+                      onClick={() => openDialog('delete', dataset)}
+                    />
                   </div>
                 </TableCell>
               </TableRow>

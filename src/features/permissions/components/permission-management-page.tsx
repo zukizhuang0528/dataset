@@ -20,7 +20,7 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { TableActionButton } from '@/components/ui/table-action-button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
 import {
@@ -262,22 +262,22 @@ export default function PermissionManagementPage() {
                       </TableCell>
                       <TableCell className='min-w-[360px] pr-8'>
                         <div className='flex flex-wrap items-center gap-2'>
-                          <ActionIconButton
+                          <TableActionButton
                             label='Edit role'
                             onClick={() => {}}
                             icon={<Icons.edit className='size-4' />}
                           />
-                          <ActionIconButton
+                          <TableActionButton
                             label={role.status === 'Enabled' ? 'Disable role' : 'Enable role'}
                             onClick={() => toggleRoleStatus(role.id)}
                             icon={<Icons.adjustments className='size-4' />}
                           />
-                          <ActionIconButton
+                          <TableActionButton
                             label='Quick duplicate role'
                             onClick={() => duplicateRole(role)}
                             icon={<IconCopy className='size-4' stroke={1.8} />}
                           />
-                          <ActionIconButton
+                          <TableActionButton
                             label='Delete role'
                             onClick={() => deleteRole(role.id)}
                             icon={<Icons.trash className='size-4' />}
@@ -307,34 +307,6 @@ export default function PermissionManagementPage() {
         </Tabs>
       </section>
     </div>
-  );
-}
-
-function ActionIconButton({
-  icon,
-  label,
-  onClick
-}: {
-  icon: React.ReactNode;
-  label: string;
-  onClick: () => void;
-}) {
-  return (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <Button
-          type='button'
-          variant='secondary'
-          size='sm'
-          aria-label={label}
-          onClick={onClick}
-          className='text-foreground hover:text-foreground h-8 rounded-lg bg-slate-100 px-2.5 shadow-none hover:bg-slate-200 [&_svg]:text-inherit'
-        >
-          {icon}
-        </Button>
-      </TooltipTrigger>
-      <TooltipContent className='bg-slate-700 text-white'>{label}</TooltipContent>
-    </Tooltip>
   );
 }
 

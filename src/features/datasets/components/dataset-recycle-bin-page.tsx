@@ -2,6 +2,8 @@
 
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
+import { Icons } from '@/components/icons';
+import { Button } from '@/components/ui/button';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -10,7 +12,6 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator
 } from '@/components/ui/breadcrumb';
-import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -27,6 +28,7 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table';
+import { TableActionButton } from '@/components/ui/table-action-button';
 import { recycleBinList, type RecycleBinItem } from '@/features/datasets/data/dataset-list-data';
 
 export default function DatasetRecycleBinPage() {
@@ -82,14 +84,11 @@ export default function DatasetRecycleBinPage() {
                   </div>
                 </TableCell>
                 <TableCell>
-                  <Button
-                    variant='ghost'
-                    size='sm'
-                    className='h-auto px-0 text-primary hover:bg-transparent hover:text-primary/80'
+                  <TableActionButton
+                    label='Restore dataset'
+                    icon={<Icons.upload className='size-4' />}
                     onClick={() => setActiveItem(item)}
-                  >
-                    Restore dataset
-                  </Button>
+                  />
                 </TableCell>
               </TableRow>
             ))}

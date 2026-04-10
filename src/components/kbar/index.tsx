@@ -5,11 +5,10 @@ import { useRouter } from 'next/navigation';
 import { useMemo } from 'react';
 import RenderResults from './render-result';
 import useThemeSwitching from './use-theme-switching';
-import { useFilteredNavGroups } from '@/hooks/use-nav';
 
 export default function KBar({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const filteredGroups = useFilteredNavGroups(navGroups);
+  const filteredGroups = navGroups;
 
   // These action are for the navigation
   const actions = useMemo(() => {

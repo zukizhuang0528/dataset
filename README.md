@@ -26,6 +26,10 @@ This is an **open source admin dashboard starter** built with **Next.js 16, Shad
 
 It gives you a production-ready **dashboard UI** with authentication, charts, tables, forms, and a feature-based folder structure, perfect for **SaaS apps, internal tools, and admin panels**.
 
+## Project Docs
+
+- Design Guidelines: [docs/design-guidelines.md](./docs/design-guidelines.md)
+
 ### Tech Stack
 
 This template uses the following stack:

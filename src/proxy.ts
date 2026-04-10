@@ -2,9 +2,19 @@ import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 import { NextRequest } from 'next/server';
 
 const isProtectedRoute = createRouteMatcher(['/dashboard(.*)']);
+const isAdminPreviewRoute = createRouteMatcher([
+  '/dashboard',
+  '/dashboard/home(.*)',
+  '/dashboard/projects(.*)',
+  '/dashboard/datasets(.*)',
+  '/dashboard/templates(.*)',
+  '/dashboard/people(.*)',
+  '/dashboard/teams(.*)',
+  '/dashboard/vendors(.*)'
+]);
 
 export default clerkMiddleware(async (auth, req: NextRequest) => {
-  if (isProtectedRoute(req)) await auth.protect();
+  if (isProtectedRoute(req) && !isAdminPreviewRoute(req)) await auth.protect();
 });
 export const config = {
   matcher: [

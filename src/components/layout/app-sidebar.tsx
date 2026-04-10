@@ -1,20 +1,11 @@
 'use client';
+
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu';
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
-  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
@@ -24,43 +15,35 @@ import {
   SidebarMenuSubItem,
   SidebarRail
 } from '@/components/ui/sidebar';
-import { UserAvatarProfile } from '@/components/user-avatar-profile';
 import { navGroups } from '@/config/nav-config';
-import { useMediaQuery } from '@/hooks/use-media-query';
-import { useOrganization, useUser } from '@clerk/nextjs';
-import { useFilteredNavGroups } from '@/hooks/use-nav';
-import { SignOutButton } from '@clerk/nextjs';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
-import * as React from 'react';
+import { usePathname } from 'next/navigation';
 import { Icons } from '../icons';
-import { OrgSwitcher } from '../org-switcher';
 
 export default function AppSidebar() {
   const pathname = usePathname();
-  const { isOpen } = useMediaQuery();
-  const { user } = useUser();
-  const { organization } = useOrganization();
-  const router = useRouter();
-  const filteredGroups = useFilteredNavGroups(navGroups);
-
-  React.useEffect(() => {
-    // Side effects based on sidebar state changes
-  }, [isOpen]);
 
   return (
-    <Sidebar collapsible='icon'>
-      <SidebarHeader className='group-data-[collapsible=icon]:pt-4'>
-        <OrgSwitcher />
+    <Sidebar collapsible='none' className='border-r border-slate-200 bg-white'>
+      <SidebarHeader className='bg-white px-4 pt-4'>
+        <div className='surface-brand-glow flex items-center gap-3 rounded-2xl border border-white/60 px-3 py-3'>
+          <div className='bg-brand-gradient flex h-10 w-10 items-center justify-center rounded-2xl text-white shadow-lg shadow-primary/20'>
+            <Icons.workspace className='size-5' />
+          </div>
+          <div className='min-w-0'>
+            <div className='text-sm font-semibold tracking-tight'>Annotate Flow</div>
+            <div className='text-muted-foreground text-xs'>Super admin console</div>
+          </div>
+        </div>
       </SidebarHeader>
-      <SidebarContent className='overflow-x-hidden'>
-        {filteredGroups.map((group) => (
-          <SidebarGroup key={group.label || 'ungrouped'} className='py-0'>
-            {group.label && <SidebarGroupLabel>{group.label}</SidebarGroupLabel>}
-            <SidebarMenu>
+      <SidebarContent className='overflow-x-hidden bg-white px-4 pt-4'>
+        {navGroups.map((group) => (
+          <SidebarGroup key={group.label || 'ungrouped'} className='px-0 py-0'>
+            <SidebarMenu className='gap-3'>
               {group.items.map((item) => {
                 const Icon = item.icon ? Icons[item.icon] : Icons.logo;
-                return item?.items && item?.items?.length > 0 ? (
+                const isActive = pathname === item.url;
+                return item?.items && item.items.length > 0 ? (
                   <Collapsible
                     key={item.title}
                     asChild
@@ -69,7 +52,15 @@ export default function AppSidebar() {
                   >
                     <SidebarMenuItem>
                       <CollapsibleTrigger asChild>
-                        <SidebarMenuButton tooltip={item.title} isActive={pathname === item.url}>
+                        <SidebarMenuButton
+                          tooltip={item.title}
+                          isActive={isActive}
+                          className={
+                            isActive
+                              ? 'bg-primary/8 pr-6 font-bold text-slate-950 after:absolute after:top-0 after:right-0 after:bottom-0 after:w-2 after:rounded-r-md after:bg-[linear-gradient(180deg,var(--brand-gradient-start),var(--brand-gradient-end))]'
+                              : 'pr-3 text-slate-600 hover:text-slate-950'
+                          }
+                        >
                           {item.icon && <Icon />}
                           <span>{item.title}</span>
                           <Icons.chevronRight className='ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90' />
@@ -95,7 +86,12 @@ export default function AppSidebar() {
                     <SidebarMenuButton
                       asChild
                       tooltip={item.title}
-                      isActive={pathname === item.url}
+                      isActive={isActive}
+                      className={
+                        isActive
+                          ? 'bg-primary/8 pr-6 font-bold text-slate-950 after:absolute after:top-0 after:right-0 after:bottom-0 after:w-2 after:rounded-r-md after:bg-[linear-gradient(180deg,var(--brand-gradient-start),var(--brand-gradient-end))]'
+                          : 'pr-3 text-slate-600 hover:text-slate-950'
+                      }
                     >
                       <Link href={item.url}>
                         <Icon />
@@ -109,62 +105,7 @@ export default function AppSidebar() {
           </SidebarGroup>
         ))}
       </SidebarContent>
-      <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <SidebarMenuButton
-                  size='lg'
-                  className='data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground'
-                >
-                  {user && (
-                    <UserAvatarProfile className='h-8 w-8 rounded-lg' showInfo user={user} />
-                  )}
-                  <Icons.chevronsDown className='ml-auto size-4' />
-                </SidebarMenuButton>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                className='w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg'
-                side='bottom'
-                align='end'
-                sideOffset={4}
-              >
-                <DropdownMenuLabel className='p-0 font-normal'>
-                  <div className='px-1 py-1.5'>
-                    {user && (
-                      <UserAvatarProfile className='h-8 w-8 rounded-lg' showInfo user={user} />
-                    )}
-                  </div>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-
-                <DropdownMenuGroup>
-                  <DropdownMenuItem onClick={() => router.push('/dashboard/profile')}>
-                    <Icons.account className='mr-2 h-4 w-4' />
-                    Profile
-                  </DropdownMenuItem>
-                  {organization && (
-                    <DropdownMenuItem onClick={() => router.push('/dashboard/billing')}>
-                      <Icons.creditCard className='mr-2 h-4 w-4' />
-                      Billing
-                    </DropdownMenuItem>
-                  )}
-                  <DropdownMenuItem onClick={() => router.push('/dashboard/notifications')}>
-                    <Icons.notification className='mr-2 h-4 w-4' />
-                    Notifications
-                  </DropdownMenuItem>
-                </DropdownMenuGroup>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <Icons.logout className='mr-2 h-4 w-4' />
-                  <SignOutButton redirectUrl='/auth/sign-in' />
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarFooter>
+      <SidebarFooter className='bg-white px-4 pb-4' />
       <SidebarRail />
     </Sidebar>
   );

@@ -1,0 +1,177 @@
+[data-theme='annotate-flow'] {
+  --background: oklch(0.979 0.006 247);
+  --foreground: oklch(0.23 0.024 262);
+  --card: oklch(0.997 0.003 255);
+  --card-foreground: oklch(0.23 0.024 262);
+  --popover: oklch(0.997 0.003 255);
+  --popover-foreground: oklch(0.23 0.024 262);
+  --primary: #8b5cf6;
+  --primary-foreground: oklch(0.995 0 0);
+  --secondary: #d946ef;
+  --secondary-foreground: oklch(0.995 0 0);
+  --muted: oklch(0.964 0.01 248);
+  --muted-foreground: oklch(0.52 0.025 262);
+  --accent: oklch(0.964 0.022 318);
+  --accent-foreground: oklch(0.31 0.08 314);
+  --destructive: oklch(0.62 0.23 28);
+  --destructive-foreground: oklch(0.995 0 0);
+  --border: oklch(0.9 0.012 255);
+  --input: oklch(0.955 0.01 252);
+  --ring: #d946ef;
+  --chart-1: #8b5cf6;
+  --chart-2: #d946ef;
+  --chart-3: oklch(0.74 0.13 338);
+  --chart-4: oklch(0.77 0.16 150);
+  --chart-5: oklch(0.76 0.16 75);
+  --sidebar: #ffffff;
+  --sidebar-foreground: oklch(0.25 0.024 262);
+  --sidebar-primary: #8b5cf6;
+  --sidebar-primary-foreground: oklch(0.995 0 0);
+  --sidebar-accent: oklch(0.965 0.018 304);
+  --sidebar-accent-foreground: oklch(0.31 0.08 314);
+  --sidebar-border: oklch(0.915 0.012 255);
+  --sidebar-ring: oklch(0.63 0.24 266);
+  --font-sans: 'Poppins';
+  --font-serif: Georgia, serif;
+  --font-mono: 'JetBrains Mono';
+  --radius: 0.875rem;
+  --shadow-x: 0px;
+  --shadow-y: 4px;
+  --shadow-blur: 16px;
+  --shadow-spread: -8px;
+  --shadow-opacity: 0.08;
+  --shadow-color: hsl(220 9% 46%);
+  --shadow-2xs: 0px 1px 2px 0px hsl(220 9% 46% / 0.03);
+  --shadow-xs: 0px 1px 2px 0px hsl(220 9% 46% / 0.03);
+  --shadow-sm: 0px 4px 8px -4px hsl(220 9% 46% / 0.06);
+  --shadow: 0px 8px 16px -8px hsl(220 9% 46% / 0.06);
+  --shadow-md: 0px 12px 24px -12px hsl(220 9% 46% / 0.08);
+  --shadow-lg: 0px 16px 32px -16px hsl(220 9% 46% / 0.1);
+  --shadow-xl: 0px 20px 40px -20px hsl(220 9% 46% / 0.12);
+  --shadow-2xl: 0px 24px 48px -24px hsl(220 9% 46% / 0.14);
+  --tracking-normal: 0em;
+  --spacing: 0.25rem;
+  --brand-gradient-start: #8b5cf6;
+  --brand-gradient-end: #d946ef;
+}
+
+[data-theme='annotate-flow'].dark {
+  --background: oklch(0.18 0.02 264);
+  --foreground: oklch(0.97 0.005 255);
+  --card: oklch(0.23 0.024 262);
+  --card-foreground: oklch(0.97 0.005 255);
+  --popover: oklch(0.23 0.024 262);
+  --popover-foreground: oklch(0.97 0.005 255);
+  --primary: #a78bfa;
+  --primary-foreground: oklch(0.14 0.01 255);
+  --secondary: #e879f9;
+  --secondary-foreground: oklch(0.14 0.01 255);
+  --muted: oklch(0.26 0.015 259);
+  --muted-foreground: oklch(0.76 0.015 255);
+  --accent: oklch(0.34 0.06 308);
+  --accent-foreground: oklch(0.97 0.005 255);
+  --destructive: oklch(0.68 0.22 25);
+  --destructive-foreground: oklch(0.14 0.01 255);
+  --border: oklch(0.33 0.018 259);
+  --input: oklch(0.28 0.02 262);
+  --ring: #e879f9;
+  --chart-1: #a78bfa;
+  --chart-2: #e879f9;
+  --chart-3: oklch(0.78 0.12 338);
+  --chart-4: oklch(0.8 0.12 154);
+  --chart-5: oklch(0.82 0.13 80);
+  --sidebar: oklch(0.2 0.02 264);
+  --sidebar-foreground: oklch(0.97 0.005 255);
+  --sidebar-primary: #a78bfa;
+  --sidebar-primary-foreground: oklch(0.14 0.01 255);
+  --sidebar-accent: oklch(0.34 0.06 308);
+  --sidebar-accent-foreground: oklch(0.97 0.005 255);
+  --sidebar-border: oklch(0.33 0.018 259);
+  --sidebar-ring: oklch(0.78 0.18 280);
+  --font-sans: 'Poppins';
+  --font-serif: Georgia, serif;
+  --font-mono: 'JetBrains Mono';
+  --radius: 0.875rem;
+  --shadow-x: 0px;
+  --shadow-y: 8px;
+  --shadow-blur: 24px;
+  --shadow-spread: -12px;
+  --shadow-opacity: 0.18;
+  --shadow-color: hsl(220 10% 12%);
+  --shadow-2xs: 0px 1px 2px 0px hsl(220 10% 12% / 0.08);
+  --shadow-xs: 0px 1px 2px 0px hsl(220 10% 12% / 0.08);
+  --shadow-sm: 0px 4px 8px -4px hsl(220 10% 12% / 0.12);
+  --shadow: 0px 8px 16px -8px hsl(220 10% 12% / 0.14);
+  --shadow-md: 0px 12px 24px -12px hsl(220 10% 12% / 0.16);
+  --shadow-lg: 0px 16px 32px -16px hsl(220 10% 12% / 0.18);
+  --shadow-xl: 0px 20px 40px -20px hsl(220 10% 12% / 0.2);
+  --shadow-2xl: 0px 24px 48px -24px hsl(220 10% 12% / 0.22);
+  --brand-gradient-start: #8b5cf6;
+  --brand-gradient-end: #d946ef;
+}
+
+[data-theme='annotate-flow'] {
+  @theme inline {
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-destructive: var(--destructive);
+    --color-destructive-foreground: var(--destructive-foreground);
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+    --color-chart-1: var(--chart-1);
+    --color-chart-2: var(--chart-2);
+    --color-chart-3: var(--chart-3);
+    --color-chart-4: var(--chart-4);
+    --color-chart-5: var(--chart-5);
+    --color-sidebar: var(--sidebar);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-ring: var(--sidebar-ring);
+    --font-sans: var(--font-sans);
+    --font-mono: var(--font-mono);
+    --font-serif: var(--font-serif);
+    --radius-sm: calc(var(--radius) - 4px);
+    --radius-md: calc(var(--radius) - 2px);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) + 6px);
+    --shadow-2xs: var(--shadow-2xs);
+    --shadow-xs: var(--shadow-xs);
+    --shadow-sm: var(--shadow-sm);
+    --shadow: var(--shadow);
+    --shadow-md: var(--shadow-md);
+    --shadow-lg: var(--shadow-lg);
+    --shadow-xl: var(--shadow-xl);
+    --shadow-2xl: var(--shadow-2xl);
+  }
+}
+
+[data-theme='annotate-flow'] body {
+  background-image:
+    radial-gradient(
+      circle at top right,
+      color-mix(in srgb, var(--brand-gradient-end) 10%, transparent),
+      transparent 28%
+    ),
+    radial-gradient(
+      circle at bottom left,
+      color-mix(in srgb, var(--brand-gradient-start) 9%, transparent),
+      transparent 24%
+    );
+}

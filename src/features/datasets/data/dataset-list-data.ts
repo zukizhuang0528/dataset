@@ -71,7 +71,7 @@ const baseDatasetList: DatasetListItem[] = [
     statusTone: 'green',
     source: 'Client',
     updatedAt: '2026-03-25 14:23',
-    owner: 'Mina Wang',
+    owner: 'Mina Walker',
     team: 'Delivery Squad A',
     createdByMe: true,
     clientName: 'Smart Drive Client B',
@@ -92,7 +92,7 @@ const baseDatasetList: DatasetListItem[] = [
     statusTone: 'blue',
     source: 'Self-collected',
     updatedAt: '2026-03-25 11:08',
-    owner: 'Cheng Chen',
+    owner: 'Ethan Brooks',
     team: 'Embodied Project Team',
     createdByMe: false,
     clientName: 'Internal',
@@ -114,7 +114,7 @@ const baseDatasetList: DatasetListItem[] = [
     statusTone: 'gray',
     source: 'Web',
     updatedAt: '2026-03-24 19:46',
-    owner: 'Victor Liu',
+    owner: 'Avery Turner',
     team: 'Vision Algorithm Team',
     createdByMe: false,
     clientName: 'Internal',
@@ -136,7 +136,7 @@ const baseDatasetList: DatasetListItem[] = [
     statusTone: 'red',
     source: 'Client',
     updatedAt: '2026-03-24 15:12',
-    owner: 'Chang Liu',
+    owner: 'Mason Carter',
     team: 'Client Delivery Team',
     createdByMe: false,
     clientName: 'Mobility Client A',
@@ -158,7 +158,7 @@ const baseDatasetList: DatasetListItem[] = [
     statusTone: 'blue',
     source: 'Self-collected',
     updatedAt: '2026-03-23 10:32',
-    owner: 'Mina Wang',
+    owner: 'Mina Walker',
     team: 'Delivery Squad A',
     createdByMe: true,
     clientName: 'Internal',
@@ -180,7 +180,7 @@ const baseDatasetList: DatasetListItem[] = [
     statusTone: 'green',
     source: 'Self-collected',
     updatedAt: '2026-03-22 17:40',
-    owner: 'Alex Chen',
+    owner: 'Noah Bennett',
     team: 'Delivery Squad B',
     createdByMe: true,
     clientName: 'Internal',
@@ -201,7 +201,7 @@ const baseDatasetList: DatasetListItem[] = [
     statusTone: 'blue',
     source: 'Client',
     updatedAt: '2026-03-21 13:05',
-    owner: 'Lena Xu',
+    owner: 'Leah Foster',
     team: 'QA Robotics Team',
     createdByMe: false,
     clientName: 'Factory Robotics Client',
@@ -223,7 +223,7 @@ const baseDatasetList: DatasetListItem[] = [
     statusTone: 'gray',
     source: 'Client',
     updatedAt: '2026-03-19 09:18',
-    owner: 'Nina Zhao',
+    owner: 'Nina Morgan',
     team: 'Archive Team',
     createdByMe: false,
     clientName: 'Smart Road Client',
@@ -238,16 +238,16 @@ const baseDatasetList: DatasetListItem[] = [
 ];
 
 const ownerNames = [
-  'Mina Wang',
-  'Cheng Chen',
-  'Victor Liu',
-  'Chang Liu',
-  'Alex Chen',
-  'Lena Xu',
-  'Nina Zhao',
-  'Leo Yang',
-  'Eva Sun',
-  'Jason He'
+  'Mina Walker',
+  'Ethan Brooks',
+  'Avery Turner',
+  'Mason Carter',
+  'Noah Bennett',
+  'Leah Foster',
+  'Nina Morgan',
+  'Leo Parker',
+  'Eva Collins',
+  'Jason Reed'
 ] as const;
 
 const teamNames = [
@@ -305,7 +305,7 @@ export const recycleBinList: RecycleBinItem[] = [
     name: 'Campus obstacle detection dataset',
     deletedAt: '2026-04-01 10:18',
     retentionLeft: '6 days 23 hours',
-    owner: 'Mina Wang',
+    owner: 'Mina Walker',
     team: 'Delivery Squad A'
   },
   {
@@ -313,7 +313,7 @@ export const recycleBinList: RecycleBinItem[] = [
     name: 'Embodied grasp verification set V2',
     deletedAt: '2026-03-31 16:42',
     retentionLeft: '6 days 06 hours',
-    owner: 'Leo Yang',
+    owner: 'Leo Parker',
     team: 'Delivery Squad B'
   }
 ];

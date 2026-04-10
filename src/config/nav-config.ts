@@ -26,6 +26,22 @@ export const navGroups: NavGroup[] = [
         shortcut: ['t', 'e'],
         isActive: false,
         items: []
+      },
+      {
+        title: 'Vendor Management',
+        url: '/dashboard/vendors',
+        icon: 'product',
+        shortcut: ['v', 'e'],
+        isActive: false,
+        items: []
+      },
+      {
+        title: 'Project Management',
+        url: '/dashboard/projects',
+        icon: 'kanban',
+        shortcut: ['p', 'r'],
+        isActive: false,
+        items: []
       }
     ]
   }

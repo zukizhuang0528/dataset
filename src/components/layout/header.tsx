@@ -1,6 +1,9 @@
 import React from 'react';
+import Link from 'next/link';
 import { Breadcrumbs } from '../breadcrumbs';
+import { Icons } from '@/components/icons';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
 import {
   Select,
   SelectContent,
@@ -8,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select';
+import { totalUnreadBadgeCount } from '@/features/notifications/data/message-center-data';
 
 export default function Header() {
   return (
@@ -23,7 +27,7 @@ export default function Header() {
               MW
             </AvatarFallback>
           </Avatar>
-          <span className='text-foreground text-sm font-semibold'>Mina Wang</span>
+          <span className='text-foreground text-sm font-semibold'>Mina Walker</span>
         </div>
 
         <Select defaultValue='en'>
@@ -35,6 +39,23 @@ export default function Header() {
             <SelectItem value='zh'>简体中文</SelectItem>
           </SelectContent>
         </Select>
+
+        <Button
+          variant='ghost'
+          size='icon'
+          className='relative h-9 w-9 rounded-xl text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+          asChild
+        >
+          <Link href='/dashboard/notifications'>
+            <Icons.notification className='h-4 w-4' />
+            {totalUnreadBadgeCount > 0 ? (
+              <span className='absolute -top-1 -right-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-semibold text-white'>
+                {totalUnreadBadgeCount}
+              </span>
+            ) : null}
+            <span className='sr-only'>Open message center</span>
+          </Link>
+        </Button>
       </div>
     </header>
   );

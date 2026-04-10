@@ -17,6 +17,9 @@ This document defines the product-wide design rules for this repository. It is t
 - Do not introduce a second component library. Reuse the existing shadcn/ui-based system.
 - Do not add sections, widgets, or content blocks that are not present in the approved prototype, unless explicitly requested.
 - Do not reintroduce brand blue as a primary visual color.
+- Prefer extending shared primitives over page-local styling.
+- Do not add page-specific CSS files unless a reusable primitive cannot express the design.
+- When a layout pattern appears more than once, extract it into a shared primitive instead of copying class strings.
 
 ## Brand Foundation
 
@@ -182,6 +185,32 @@ Do not use:
 3. Primary and secondary action area
 4. Main content area
 5. Supporting content only if the prototype requires it
+
+### Shared Page Primitives
+
+Prefer using the shared page-level primitives in:
+
+- `src/components/layout/admin-page-primitives.tsx`
+
+Current shared primitives:
+
+- `AdminPageHero`
+- `AdminSurface`
+- `AdminSectionHeader`
+- `AdminFilterLabel`
+
+New admin pages should start from these primitives before adding page-local wrappers.
+
+### Implementation Rules
+
+- Reuse `components/ui` and shared layout primitives before introducing new wrappers.
+- Avoid large one-off class blocks in page files when the same visual pattern already exists elsewhere.
+- Extract repeated page shells, headers, filter panels, and section wrappers into shared primitives.
+- Keep custom CSS close to zero. Prefer Tailwind utilities and shared React primitives over ad hoc stylesheet rules.
+- If a page needs a truly new layout pattern, make it reusable by default.
+- All mock data shown in product tables should default to a North American business context unless a page explicitly requires another locale.
+- All tables must stay constrained to the browser width. If column content exceeds the available space, the table itself must scroll horizontally inside its own container rather than expanding the page canvas.
+- Wide tables should define an explicit `min-w-[...]` on the shared `Table` component so the internal horizontal scroll behavior is intentional and predictable.
 
 ### Sidebar Rules
 

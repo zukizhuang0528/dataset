@@ -176,9 +176,9 @@ export default function TeamManagementPage() {
 
       <div className='grid gap-6 xl:grid-cols-[288px_minmax(0,1fr)]'>
         <section className='rounded-3xl border bg-white p-6 shadow-md'>
-          <div className='mb-4 flex items-center justify-between gap-4'>
+          <div className='mb-4 space-y-4'>
             <h2 className='text-lg font-semibold'>Team Management</h2>
-            <Button className='bg-brand-gradient h-10 rounded-xl border-transparent px-4 text-white hover:opacity-95'>
+            <Button className='bg-primary h-10 rounded-xl border-transparent px-4 text-white shadow-sm hover:bg-primary/90'>
               <Icons.add className='size-4' />
               Create
             </Button>
@@ -235,14 +235,14 @@ export default function TeamManagementPage() {
               </p>
             </div>
 
-            <Button className='bg-brand-gradient h-10 rounded-xl border-transparent px-5 text-white hover:opacity-95'>
+            <Button className='bg-primary h-10 rounded-xl border-transparent px-5 text-white shadow-sm hover:bg-primary/90'>
               <Icons.teams className='size-4' />
               Invite Member
             </Button>
           </div>
 
           <div className='overflow-hidden rounded-2xl border'>
-            <Table>
+            <Table className='!w-full min-w-[640px]'>
               <TableHeader className='bg-muted/40'>
                 <TableRow>
                   <TableHead>No.</TableHead>

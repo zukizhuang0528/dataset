@@ -1,6 +1,12 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import {
+  AdminFilterLabel,
+  AdminPageHero,
+  AdminSectionHeader,
+  AdminSurface
+} from '@/components/layout/admin-page-primitives';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
@@ -529,16 +535,21 @@ export default function UserManagementPage() {
   }
 
   return (
-    <div className='space-y-6'>
-      <div className='space-y-1'>
-        <h1 className='text-foreground text-3xl font-semibold tracking-tight'>User Management</h1>
-        <p className='text-muted-foreground text-sm'>
-          Manage profile information and status for all platform users.
-        </p>
-      </div>
+    <div className='space-y-8 pb-8'>
+      <AdminPageHero
+        eyebrow='Platform Administration'
+        title='User Management'
+        description='Manage profile information, role assignments, affiliated vendors, and activation status for all platform users.'
+        actions={
+          <Button className='bg-primary h-10 rounded-xl border-transparent px-5 text-white shadow-sm hover:bg-primary/90'>
+            <Icons.add className='size-4' />
+            Create Account
+          </Button>
+        }
+      />
 
-      <div className='rounded-3xl border border-white/60 bg-white/80 p-6 shadow-lg shadow-primary/8 backdrop-blur-sm'>
-        <div className='grid gap-4 md:grid-cols-3'>
+      <AdminSurface className='px-8 py-7'>
+        <div className='grid gap-5 md:grid-cols-3'>
           <FilterField label='Name'>
             <Input
               value={draftFilters.name}
@@ -609,48 +620,52 @@ export default function UserManagementPage() {
           </FilterField>
         </div>
 
-        <div className='mt-5 flex justify-end gap-3'>
-          <Button
-            variant='outline'
-            className='rounded-xl'
-            onClick={() => {
-              setDraftFilters(emptyFilters);
-              setAppliedFilters(emptyFilters);
-              setHeaderRoleDraft('');
-              setHeaderRoleApplied('');
-              setSelectedIds([]);
-            }}
-          >
-            Reset
-          </Button>
-          <Button
-            className='bg-brand-gradient rounded-xl border-transparent text-white hover:opacity-95'
-            onClick={() => setAppliedFilters(draftFilters)}
-          >
-            Search
-          </Button>
+        <div className='mt-6 flex flex-wrap items-end justify-between gap-4 border-t border-slate-100 pt-6'>
+          <div className='text-muted-foreground text-sm'>
+            Filter by identity, account information, and role scope.
+          </div>
+          <div className='flex flex-wrap justify-end gap-3'>
+            <Button
+              variant='outline'
+              className='h-10 rounded-xl px-5'
+              onClick={() => {
+                setDraftFilters(emptyFilters);
+                setAppliedFilters(emptyFilters);
+                setHeaderRoleDraft('');
+                setHeaderRoleApplied('');
+                setSelectedIds([]);
+              }}
+            >
+              Reset
+            </Button>
+            <Button
+              className='bg-primary h-10 rounded-xl border-transparent px-5 text-white hover:bg-primary/90'
+              onClick={() => setAppliedFilters(draftFilters)}
+            >
+              Search
+            </Button>
+          </div>
         </div>
-      </div>
+      </AdminSurface>
 
-      <div className='flex items-center justify-between gap-3'>
-        <Button
-          variant='outline'
-          className='rounded-xl disabled:border-slate-200 disabled:bg-slate-50 disabled:text-slate-400 disabled:shadow-none'
-          disabled={selectedIds.length === 0}
-          onClick={handleBulkDisable}
-        >
-          Bulk Disable
-        </Button>
+      <AdminSurface className='overflow-hidden'>
+        <AdminSectionHeader
+          title='User Directory'
+          description={`${sortedUsers.length} users in the current result set`}
+          action={
+            <Button
+              variant='outline'
+              className='h-10 rounded-xl px-5 disabled:border-slate-200 disabled:bg-slate-50 disabled:text-slate-400 disabled:shadow-none'
+              disabled={selectedIds.length === 0}
+              onClick={handleBulkDisable}
+            >
+              Bulk Disable
+            </Button>
+          }
+        />
 
-        <Button className='bg-brand-gradient rounded-xl border-transparent text-white hover:opacity-95'>
-          <Icons.add className='size-4' />
-          Create Account
-        </Button>
-      </div>
-
-      <div className='overflow-hidden rounded-3xl border bg-white shadow-md'>
-        <Table>
-          <TableHeader className='bg-muted/40'>
+        <Table className='min-w-[1660px]'>
+          <TableHeader className='bg-slate-50/80'>
             <TableRow>
               <TableHead className='w-16 pl-6'>
                 <Checkbox
@@ -711,7 +726,7 @@ export default function UserManagementPage() {
                       <Icons.chevronsUpDown className='text-muted-foreground size-4' />
                     </button>
                   </PopoverTrigger>
-                  <PopoverContent className='w-72 rounded-2xl p-4'>
+                  <PopoverContent className='w-72 rounded-2xl border border-border/80 p-4 shadow-sm'>
                     <div className='space-y-4'>
                       <Select
                         value={headerRoleDraft || 'all'}
@@ -740,7 +755,7 @@ export default function UserManagementPage() {
                           Cancel
                         </Button>
                         <Button
-                          className='bg-brand-gradient border-transparent text-white hover:opacity-95'
+                          className='bg-primary border-transparent text-white hover:bg-primary/90'
                           onClick={() => {
                             setHeaderRoleApplied(headerRoleDraft);
                             setRoleFilterOpen(false);
@@ -806,7 +821,7 @@ export default function UserManagementPage() {
           </TableHeader>
           <TableBody>
             {sortedUsers.map((user) => (
-              <TableRow key={user.id} className='hover:bg-muted/20'>
+              <TableRow key={user.id} className='hover:bg-slate-50/80'>
                 <TableCell className='pl-6'>
                   <Checkbox
                     className='size-5 rounded-[4px] border-slate-400 shadow-none data-[state=checked]:border-primary'
@@ -816,10 +831,15 @@ export default function UserManagementPage() {
                   />
                 </TableCell>
                 <TableCell>{user.sequence}</TableCell>
-                <TableCell>{user.name}</TableCell>
+                <TableCell>
+                  <div className='space-y-1'>
+                    <div className='text-foreground font-medium'>{user.name}</div>
+                    <div className='text-muted-foreground text-xs'>{user.id}</div>
+                  </div>
+                </TableCell>
                 <TableCell>{user.mobile}</TableCell>
-                <TableCell>{user.email}</TableCell>
-                <TableCell>{user.account}</TableCell>
+                <TableCell className='text-slate-600'>{user.email}</TableCell>
+                <TableCell className='font-mono text-[13px]'>{user.account}</TableCell>
                 <TableCell>{user.platformRole}</TableCell>
                 <TableCell>{user.projectRole}</TableCell>
                 <TableCell>{user.isVendor}</TableCell>
@@ -831,8 +851,8 @@ export default function UserManagementPage() {
                     className={cn(
                       'inline-flex rounded-full px-2.5 py-1 text-xs font-medium',
                       user.status === 'Enabled'
-                        ? 'bg-emerald-500/12 text-emerald-700'
-                        : 'bg-slate-200 text-slate-700'
+                        ? 'bg-emerald-50 text-emerald-700'
+                        : 'bg-slate-100 text-slate-600'
                     )}
                   >
                     {user.status}
@@ -843,17 +863,18 @@ export default function UserManagementPage() {
                     <Button
                       variant='ghost'
                       size='sm'
+                      className='rounded-lg'
                       disabled={user.status === 'Disabled'}
                       onClick={() => handleSingleDisable(user.id)}
                     >
                       <Icons.circleX className='size-4' />
                       Disable
                     </Button>
-                    <Button variant='ghost' size='sm'>
+                    <Button variant='ghost' size='sm' className='rounded-lg'>
                       <Icons.edit className='size-4' />
                       Edit
                     </Button>
-                    <Button variant='ghost' size='sm'>
+                    <Button variant='ghost' size='sm' className='rounded-lg'>
                       <Icons.externalLink className='size-4' />
                       View
                     </Button>
@@ -863,7 +884,7 @@ export default function UserManagementPage() {
             ))}
           </TableBody>
         </Table>
-      </div>
+      </AdminSurface>
     </div>
   );
 }
@@ -871,7 +892,7 @@ export default function UserManagementPage() {
 function FilterField({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className='space-y-2'>
-      <span className='text-foreground text-sm font-medium'>{label}</span>
+      <AdminFilterLabel>{label}</AdminFilterLabel>
       {children}
     </label>
   );

@@ -36,7 +36,7 @@ export default function DatasetListingPage() {
   const filteredDatasets = useMemo(() => {
     return datasets.filter((dataset) => {
       const matchDomain = domain === 'All' || dataset.domain === domain;
-      const matchMine = !onlyMine || dataset.owner === 'Mina Wang';
+      const matchMine = !onlyMine || dataset.owner === 'Mina Walker';
       const haystack =
         `${dataset.name} ${dataset.id} ${dataset.owner} ${dataset.team}`.toLowerCase();
       const matchQuery = !query || haystack.includes(query.toLowerCase());
@@ -184,7 +184,7 @@ export default function DatasetListingPage() {
         </CardHeader>
         <CardContent>
           <div className='overflow-hidden rounded-2xl border'>
-            <Table>
+            <Table className='!w-full min-w-[920px]'>
               <TableHeader className='bg-muted/60'>
                 <TableRow>
                   <TableHead>Dataset</TableHead>

@@ -3,6 +3,12 @@
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import { Icons } from '@/components/icons';
+import {
+  AdminFilterLabel,
+  AdminPageHero,
+  AdminSectionHeader,
+  AdminSurface
+} from '@/components/layout/admin-page-primitives';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -106,23 +112,25 @@ export default function DatasetManagementPage() {
   };
 
   return (
-    <div className='space-y-6'>
-      <div className='flex flex-wrap items-center justify-between gap-4'>
-        <div>
-          <h1 className='text-foreground text-3xl font-semibold tracking-tight'>Datasets</h1>
-        </div>
-        <div className='flex items-center gap-3'>
-          <Button variant='outline' className='rounded-xl' asChild>
-            <Link href='/dashboard/datasets/recycle-bin'>Recycle Bin</Link>
-          </Button>
-          <Button className='bg-brand-gradient rounded-xl border-transparent text-white hover:opacity-95'>
-            New / Import Dataset
-          </Button>
-        </div>
-      </div>
+    <div className='space-y-8 pb-8'>
+      <AdminPageHero
+        eyebrow='Data Operations'
+        title='Dataset Management'
+        description='Search datasets, monitor lifecycle state, and manage downstream operational actions from a single list view.'
+        actions={
+          <>
+            <Button variant='outline' className='h-10 rounded-xl px-5' asChild>
+              <Link href='/dashboard/datasets/recycle-bin'>Recycle Bin</Link>
+            </Button>
+            <Button className='bg-primary h-10 rounded-xl border-transparent px-5 text-white shadow-sm hover:bg-primary/90'>
+              New / Import Dataset
+            </Button>
+          </>
+        }
+      />
 
-      <section className='rounded-3xl border bg-white p-6 shadow-md'>
-        <div className='grid gap-4 xl:grid-cols-4'>
+      <AdminSurface className='px-8 py-7'>
+        <div className='grid gap-5 xl:grid-cols-4'>
           <FilterBlock label='Task Domain'>
             <Select value={domain} onValueChange={setDomain}>
               <SelectTrigger className='h-10 w-full rounded-xl data-[size=default]:h-10'>
@@ -181,8 +189,8 @@ export default function DatasetManagementPage() {
           </FilterBlock>
         </div>
 
-        <div className='mt-4 grid gap-4 xl:grid-cols-[1.8fr_auto_auto] xl:items-end'>
-          <div className='grid gap-4 sm:grid-cols-[1fr_auto] sm:items-end'>
+        <div className='mt-6 grid gap-4 xl:grid-cols-[minmax(0,1.8fr)_auto] xl:items-end'>
+          <div className='grid gap-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end'>
             <FilterBlock label='Keyword Search'>
               <Input
                 value={query}
@@ -192,7 +200,7 @@ export default function DatasetManagementPage() {
               />
             </FilterBlock>
             <Button
-              className='bg-brand-gradient h-10 rounded-xl border-transparent text-white hover:opacity-95'
+              className='bg-primary h-10 rounded-xl border-transparent px-5 text-white hover:bg-primary/90'
               onClick={() => {
                 setSubmittedQuery(query);
                 setPage(1);
@@ -201,40 +209,48 @@ export default function DatasetManagementPage() {
               Search
             </Button>
           </div>
-          <Button
-            variant='outline'
-            className='h-10 rounded-xl'
-            onClick={() => {
-              setDomain('All');
-              setTaskType('All');
-              setStatus('All');
-              setSource('All');
-              setQuery('');
-              setSubmittedQuery('');
-              setOnlyMine(false);
-              setPage(1);
-            }}
-          >
-            Reset
-          </Button>
-          <label
-            htmlFor='dataset-created-by-me'
-            className='text-muted-foreground flex items-center gap-3 text-sm'
-          >
-            <Switch id='dataset-created-by-me' checked={onlyMine} onCheckedChange={setOnlyMine} />
-            <span>Only datasets created by me</span>
-          </label>
-        </div>
-      </section>
 
-      <section className='overflow-hidden rounded-3xl border bg-white shadow-md'>
-        <div className='text-muted-foreground flex items-center justify-between px-6 py-4 text-xs'>
-          <span>Total {filteredDatasets.length}</span>
-          <span>Default sorting: most recently updated first</span>
+          <div className='flex flex-wrap items-end justify-end gap-3'>
+            <label
+              htmlFor='dataset-created-by-me'
+              className='text-muted-foreground flex h-10 items-center gap-3 text-sm'
+            >
+              <Switch id='dataset-created-by-me' checked={onlyMine} onCheckedChange={setOnlyMine} />
+              <span>Only datasets created by me</span>
+            </label>
+            <Button
+              variant='outline'
+              className='h-10 rounded-xl px-5'
+              onClick={() => {
+                setDomain('All');
+                setTaskType('All');
+                setStatus('All');
+                setSource('All');
+                setQuery('');
+                setSubmittedQuery('');
+                setOnlyMine(false);
+                setPage(1);
+              }}
+            >
+              Reset
+            </Button>
+          </div>
         </div>
+      </AdminSurface>
 
-        <Table>
-          <TableHeader className='bg-muted/30'>
+      <AdminSurface className='overflow-hidden'>
+        <AdminSectionHeader
+          title='Dataset Directory'
+          description={`${filteredDatasets.length} datasets in the current result set`}
+          action={
+            <div className='text-muted-foreground text-xs font-medium'>
+              Default sorting: most recently updated first
+            </div>
+          }
+        />
+
+        <Table className='!w-full min-w-[980px]'>
+          <TableHeader className='bg-slate-50/80'>
             <TableRow>
               <TableHead className='pl-6'>Dataset Name</TableHead>
               <TableHead>Task Domain</TableHead>
@@ -248,10 +264,10 @@ export default function DatasetManagementPage() {
           </TableHeader>
           <TableBody>
             {pagedDatasets.map((dataset) => (
-              <TableRow key={dataset.id} className='hover:bg-muted/20'>
+              <TableRow key={dataset.id} className='hover:bg-slate-50/80'>
                 <TableCell className='pl-6'>
                   <div className='space-y-1'>
-                    <div className='max-w-[220px] truncate font-semibold'>{dataset.name}</div>
+                    <div className='max-w-[220px] truncate font-medium'>{dataset.name}</div>
                     <div className='text-muted-foreground font-mono text-xs'>{dataset.id}</div>
                   </div>
                 </TableCell>
@@ -263,7 +279,7 @@ export default function DatasetManagementPage() {
                     </div>
                   </div>
                 </TableCell>
-                <TableCell>{dataset.version}</TableCell>
+                <TableCell className='font-mono text-[13px]'>{dataset.version}</TableCell>
                 <TableCell>
                   <Badge
                     variant='outline'
@@ -276,7 +292,7 @@ export default function DatasetManagementPage() {
                   </Badge>
                 </TableCell>
                 <TableCell>{dataset.source}</TableCell>
-                <TableCell>{dataset.updatedAt}</TableCell>
+                <TableCell className='text-slate-600'>{dataset.updatedAt}</TableCell>
                 <TableCell>
                   <div className='space-y-1'>
                     <div className='font-medium'>{dataset.owner}</div>
@@ -289,7 +305,7 @@ export default function DatasetManagementPage() {
                       variant='ghost'
                       size='sm'
                       asChild
-                      className='h-auto px-0 text-primary hover:bg-transparent hover:text-primary/80'
+                      className='h-auto rounded-lg px-0 text-primary hover:bg-transparent hover:text-primary/80'
                     >
                       <Link href={`/dashboard/datasets/${dataset.id}`}>View Details</Link>
                     </Button>
@@ -299,14 +315,17 @@ export default function DatasetManagementPage() {
                           variant='ghost'
                           size='sm'
                           className={cn(
-                            'h-auto px-2 text-primary hover:bg-primary/5',
+                            'h-auto rounded-lg px-2 text-primary hover:bg-primary/5',
                             !dataset.canManage && 'text-slate-400 hover:bg-transparent'
                           )}
                         >
                           More
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align='end' className='w-48 rounded-xl'>
+                      <DropdownMenuContent
+                        align='end'
+                        className='w-48 rounded-xl border border-border/80 shadow-sm'
+                      >
                         <DropdownMenuItem onClick={() => openDialog('edit', dataset)}>
                           Edit dataset info
                         </DropdownMenuItem>
@@ -339,7 +358,7 @@ export default function DatasetManagementPage() {
           </TableBody>
         </Table>
 
-        <div className='flex items-center justify-between px-6 py-4 text-xs text-slate-500'>
+        <div className='flex items-center justify-between px-8 py-5 text-xs text-slate-500'>
           <span>10 items per page</span>
           <div className='flex items-center gap-2'>
             <PageButton
@@ -368,7 +387,7 @@ export default function DatasetManagementPage() {
             </PageButton>
           </div>
         </div>
-      </section>
+      </AdminSurface>
 
       <DatasetActionDialog type={dialogType} dataset={activeDataset} onClose={closeDialog} />
     </div>
@@ -378,7 +397,7 @@ export default function DatasetManagementPage() {
 function FilterBlock({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className='space-y-2'>
-      <span className='text-muted-foreground text-xs'>{label}</span>
+      <AdminFilterLabel>{label}</AdminFilterLabel>
       {children}
     </label>
   );
@@ -490,7 +509,7 @@ function DatasetActionDialog({
                 Cancel
               </Button>
               <Button
-                className='bg-brand-gradient border-transparent text-white hover:opacity-95'
+                className='bg-primary border-transparent text-white hover:bg-primary/90'
                 onClick={onClose}
               >
                 Save
@@ -534,7 +553,7 @@ function DatasetActionDialog({
                 Cancel
               </Button>
               <Button
-                className='bg-brand-gradient border-transparent text-white hover:opacity-95'
+                className='bg-primary border-transparent text-white hover:bg-primary/90'
                 onClick={onClose}
               >
                 Confirm Clone
@@ -579,7 +598,7 @@ function DatasetActionDialog({
                 Cancel
               </Button>
               <Button
-                className='bg-brand-gradient border-transparent text-white hover:opacity-95'
+                className='bg-primary border-transparent text-white hover:bg-primary/90'
                 onClick={onClose}
               >
                 Confirm Append

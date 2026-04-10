@@ -57,7 +57,7 @@ export default function DatasetRecycleBinPage() {
       </div>
 
       <section className='overflow-hidden rounded-3xl border bg-white shadow-sm'>
-        <Table>
+        <Table className='!w-full min-w-[720px]'>
           <TableHeader className='bg-muted/30'>
             <TableRow>
               <TableHead>Dataset Name</TableHead>

@@ -20,6 +20,14 @@ export const navGroups: NavGroup[] = [
         items: []
       },
       {
+        title: 'Permission Management',
+        url: '/dashboard/permissions',
+        icon: 'lock',
+        shortcut: ['p', 'm'],
+        isActive: false,
+        items: []
+      },
+      {
         title: 'Team Management',
         url: '/dashboard/teams',
         icon: 'workspace',

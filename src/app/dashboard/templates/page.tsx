@@ -5,8 +5,8 @@ export default function TemplatesPage() {
   return (
     <PageContainer
       scrollable
-      pageTitle='标注模板管理'
-      pageDescription='管理不同任务类型的标注规范与模板版本。'
+      pageTitle='Annotation Template Management'
+      pageDescription='Manage annotation guidelines and template versions for different task types.'
     >
       <AdminPlaceholderPage
         eyebrow='Template governance'

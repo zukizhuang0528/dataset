@@ -4,6 +4,14 @@ export const navGroups: NavGroup[] = [
     label: 'Overview',
     items: [
       {
+        title: 'Welcome',
+        url: '/dashboard/welcome',
+        icon: 'dashboard',
+        shortcut: ['w', 'e'],
+        isActive: false,
+        items: []
+      },
+      {
         title: 'Dataset Management',
         url: '/dashboard/datasets',
         icon: 'workspace',
@@ -24,6 +32,14 @@ export const navGroups: NavGroup[] = [
         url: '/dashboard/permissions',
         icon: 'lock',
         shortcut: ['p', 'm'],
+        isActive: false,
+        items: []
+      },
+      {
+        title: 'Configuration Management',
+        url: '/dashboard/configuration',
+        icon: 'settings',
+        shortcut: ['c', 'm'],
         isActive: false,
         items: []
       },

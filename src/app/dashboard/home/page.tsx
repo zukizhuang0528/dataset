@@ -3,7 +3,11 @@ import AdminPlaceholderPage from '@/features/admin/components/admin-placeholder-
 
 export default function HomePage() {
   return (
-    <PageContainer scrollable pageTitle='首页' pageDescription='超级管理员全局总览与核心运营入口。'>
+    <PageContainer
+      scrollable
+      pageTitle='Home'
+      pageDescription='Global overview and key operational entry points for super administrators.'
+    >
       <AdminPlaceholderPage
         eyebrow='Admin overview'
         title='Super admin home'

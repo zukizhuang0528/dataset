@@ -9,6 +9,14 @@ import {
 } from '@/components/layout/admin-page-primitives';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import {
@@ -50,6 +58,15 @@ type UserRecord = {
   status: UserStatus;
 };
 
+type GeneratedAccount = {
+  username: string;
+  password: string;
+};
+
+type EditUserForm = UserRecord & {
+  gender: string;
+};
+
 type Filters = {
   name: string;
   mobile: string;
@@ -86,6 +103,16 @@ const projectRoleOptions: ProjectRole[] = [
   'QA Lead',
   'Delivery Lead'
 ];
+
+const genderOptions = ['Prefer not to say', 'Female', 'Male', 'Non-binary'] as const;
+
+const vendorOptions = [
+  'CoreData Services',
+  'Vertex Annotation',
+  'Skyline Data Works',
+  'Prime Label Studio',
+  'Nova Vendor Group'
+] as const;
 
 const initialUsers: UserRecord[] = [
   {
@@ -440,6 +467,12 @@ export default function UserManagementPage() {
   const [roleFilterOpen, setRoleFilterOpen] = useState(false);
   const [headerRoleDraft, setHeaderRoleDraft] = useState('');
   const [headerRoleApplied, setHeaderRoleApplied] = useState('');
+  const [bulkCreateOpen, setBulkCreateOpen] = useState(false);
+  const [bulkCreateCount, setBulkCreateCount] = useState('');
+  const [bulkCreateResultOpen, setBulkCreateResultOpen] = useState(false);
+  const [generatedAccounts, setGeneratedAccounts] = useState<GeneratedAccount[]>([]);
+  const [editUserOpen, setEditUserOpen] = useState(false);
+  const [editUserForm, setEditUserForm] = useState<EditUserForm | null>(null);
 
   const filteredUsers = useMemo(() => {
     return users.filter((user) => {
@@ -535,351 +568,717 @@ export default function UserManagementPage() {
     setSelectedIds((current) => current.filter((selectedId) => selectedId !== id));
   }
 
+  function handleBulkCreateSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const count = Number.parseInt(bulkCreateCount, 10);
+
+    if (!Number.isFinite(count) || count < 1) return;
+
+    setGeneratedAccounts(Array.from({ length: count }, () => generateAccountCredentials()));
+    setBulkCreateOpen(false);
+    setBulkCreateResultOpen(true);
+  }
+
+  function openEditUser(user: UserRecord) {
+    setEditUserForm({ ...user, gender: 'Prefer not to say' });
+    setEditUserOpen(true);
+  }
+
+  function updateEditUserForm<K extends keyof EditUserForm>(key: K, value: EditUserForm[K]) {
+    setEditUserForm((current) => (current ? { ...current, [key]: value } : current));
+  }
+
+  function handleEditUserSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    if (!editUserForm) return;
+
+    setUsers((current) =>
+      current.map((user) =>
+        user.id === editUserForm.id
+          ? {
+              ...user,
+              name: editUserForm.name,
+              mobile: editUserForm.mobile,
+              email: editUserForm.email,
+              account: editUserForm.account,
+              platformRole: editUserForm.platformRole,
+              projectRole: editUserForm.projectRole,
+              isVendor: editUserForm.isVendor,
+              vendorName: editUserForm.isVendor === 'Yes' ? editUserForm.vendorName : '-',
+              status: editUserForm.status,
+              recentLoginAt: editUserForm.recentLoginAt,
+              registeredAt: editUserForm.registeredAt
+            }
+          : user
+      )
+    );
+    setEditUserOpen(false);
+  }
+
   return (
-    <div className='space-y-8 pb-8'>
-      <AdminPageHero
-        eyebrow='Platform Administration'
-        title='User Management'
-        description='Manage profile information, role assignments, affiliated vendors, and activation status for all platform users.'
-        actions={
-          <Button className='bg-primary h-10 rounded-xl border-transparent px-5 text-white shadow-sm hover:bg-primary/90'>
-            <Icons.add className='size-4' />
-            Create Account
-          </Button>
-        }
-      />
-
-      <AdminSurface className='px-8 py-7'>
-        <div className='grid gap-5 md:grid-cols-3'>
-          <FilterField label='Name'>
-            <Input
-              value={draftFilters.name}
-              onChange={(event) => updateDraft('name', event.target.value)}
-              placeholder='Enter name'
-              className='h-11 rounded-xl'
-            />
-          </FilterField>
-          <FilterField label='Mobile'>
-            <Input
-              value={draftFilters.mobile}
-              onChange={(event) => updateDraft('mobile', event.target.value)}
-              placeholder='Enter mobile'
-              className='h-11 rounded-xl'
-            />
-          </FilterField>
-          <FilterField label='Email'>
-            <Input
-              value={draftFilters.email}
-              onChange={(event) => updateDraft('email', event.target.value)}
-              placeholder='Enter email'
-              className='h-11 rounded-xl'
-            />
-          </FilterField>
-          <FilterField label='Account'>
-            <Input
-              value={draftFilters.account}
-              onChange={(event) => updateDraft('account', event.target.value)}
-              placeholder='Enter account'
-              className='h-11 rounded-xl'
-            />
-          </FilterField>
-          <FilterField label='Platform Role'>
-            <Select
-              value={draftFilters.platformRole || 'all'}
-              onValueChange={(value) => updateDraft('platformRole', value === 'all' ? '' : value)}
-            >
-              <SelectTrigger className='h-11 w-full rounded-xl data-[size=default]:h-11'>
-                <SelectValue placeholder='Select role' />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value='all'>All Roles</SelectItem>
-                {platformRoleOptions.map((role) => (
-                  <SelectItem key={role} value={role}>
-                    {role}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </FilterField>
-          <FilterField label='Project Role'>
-            <Select
-              value={draftFilters.projectRole || 'all'}
-              onValueChange={(value) => updateDraft('projectRole', value === 'all' ? '' : value)}
-            >
-              <SelectTrigger className='h-11 w-full rounded-xl data-[size=default]:h-11'>
-                <SelectValue placeholder='Select role' />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value='all'>All Roles</SelectItem>
-                {projectRoleOptions.map((role) => (
-                  <SelectItem key={role} value={role}>
-                    {role}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </FilterField>
-        </div>
-
-        <div className='mt-6 flex flex-wrap items-end justify-between gap-4 border-t border-slate-100 pt-6'>
-          <div className='text-muted-foreground text-sm'>
-            Filter by identity, account information, and role scope.
-          </div>
-          <div className='flex flex-wrap justify-end gap-3'>
+    <>
+      <div className='space-y-8 pb-8'>
+        <AdminPageHero
+          eyebrow='Platform Administration'
+          title='User Management'
+          description='Manage profile information, role assignments, affiliated vendors, and activation status for all platform users.'
+          actions={
             <Button
-              variant='outline'
-              className='h-10 rounded-xl px-5'
-              onClick={() => {
-                setDraftFilters(emptyFilters);
-                setAppliedFilters(emptyFilters);
-                setHeaderRoleDraft('');
-                setHeaderRoleApplied('');
-                setSelectedIds([]);
-              }}
+              className='bg-primary h-10 rounded-xl border-transparent px-5 text-white shadow-sm hover:bg-primary/90'
+              onClick={() => setBulkCreateOpen(true)}
             >
-              Reset
-            </Button>
-            <Button
-              className='bg-primary h-10 rounded-xl border-transparent px-5 text-white hover:bg-primary/90'
-              onClick={() => setAppliedFilters(draftFilters)}
-            >
-              Search
-            </Button>
-          </div>
-        </div>
-      </AdminSurface>
-
-      <AdminSurface className='overflow-hidden'>
-        <AdminSectionHeader
-          title='User Directory'
-          description={`${sortedUsers.length} users in the current result set`}
-          action={
-            <Button
-              variant='outline'
-              className='h-10 rounded-xl px-5 disabled:border-slate-200 disabled:bg-slate-50 disabled:text-slate-400 disabled:shadow-none'
-              disabled={selectedIds.length === 0}
-              onClick={handleBulkDisable}
-            >
-              Bulk Disable
+              <Icons.add className='size-4' />
+              Bulk Create Users
             </Button>
           }
         />
 
-        <Table className='min-w-[1660px]'>
-          <TableHeader className='bg-slate-50/80'>
-            <TableRow>
-              <TableHead className='w-16 pl-6'>
-                <Checkbox
-                  className='size-5 rounded-[4px] border-slate-400 shadow-none data-[state=checked]:border-primary'
-                  checked={allVisibleSelected}
-                  onCheckedChange={(checked) => toggleSelectAll(Boolean(checked))}
-                  aria-label='Select all users'
-                />
-              </TableHead>
-              <TableHead>
-                <SortButton
-                  label='No.'
-                  active={sortKey === 'sequence'}
-                  direction={sortDirection}
-                  onClick={() => handleSort('sequence')}
-                />
-              </TableHead>
-              <TableHead>
-                <SortButton
-                  label='Name'
-                  active={sortKey === 'name'}
-                  direction={sortDirection}
-                  onClick={() => handleSort('name')}
-                />
-              </TableHead>
-              <TableHead>
-                <SortButton
-                  label='Mobile'
-                  active={sortKey === 'mobile'}
-                  direction={sortDirection}
-                  onClick={() => handleSort('mobile')}
-                />
-              </TableHead>
-              <TableHead>
-                <SortButton
-                  label='Email'
-                  active={sortKey === 'email'}
-                  direction={sortDirection}
-                  onClick={() => handleSort('email')}
-                />
-              </TableHead>
-              <TableHead>
-                <SortButton
-                  label='Account'
-                  active={sortKey === 'account'}
-                  direction={sortDirection}
-                  onClick={() => handleSort('account')}
-                />
-              </TableHead>
-              <TableHead>
-                <Popover open={roleFilterOpen} onOpenChange={setRoleFilterOpen}>
-                  <PopoverTrigger asChild>
-                    <button
-                      type='button'
-                      className='text-foreground hover:text-primary inline-flex items-center gap-1 text-left font-medium'
-                    >
-                      <span>Platform Role</span>
-                      <Icons.chevronsUpDown className='text-muted-foreground size-4' />
-                    </button>
-                  </PopoverTrigger>
-                  <PopoverContent className='w-72 rounded-2xl border border-border/80 p-4 shadow-sm'>
-                    <div className='space-y-4'>
-                      <Select
-                        value={headerRoleDraft || 'all'}
-                        onValueChange={(value) => setHeaderRoleDraft(value === 'all' ? '' : value)}
-                      >
-                        <SelectTrigger className='h-11 w-full rounded-xl data-[size=default]:h-11'>
-                          <SelectValue placeholder='Select role' />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value='all'>All Roles</SelectItem>
-                          {platformRoleOptions.map((role) => (
-                            <SelectItem key={role} value={role}>
-                              {role}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <div className='flex justify-end gap-2'>
-                        <Button
-                          variant='ghost'
-                          onClick={() => {
-                            setHeaderRoleDraft(headerRoleApplied);
-                            setRoleFilterOpen(false);
-                          }}
-                        >
-                          Cancel
-                        </Button>
-                        <Button
-                          className='bg-primary border-transparent text-white hover:bg-primary/90'
-                          onClick={() => {
-                            setHeaderRoleApplied(headerRoleDraft);
-                            setRoleFilterOpen(false);
-                          }}
-                        >
-                          Confirm
-                        </Button>
-                      </div>
-                    </div>
-                  </PopoverContent>
-                </Popover>
-              </TableHead>
-              <TableHead>
-                <SortButton
-                  label='Project Role'
-                  active={sortKey === 'projectRole'}
-                  direction={sortDirection}
-                  onClick={() => handleSort('projectRole')}
-                />
-              </TableHead>
-              <TableHead>
-                <SortButton
-                  label='Vendor User'
-                  active={sortKey === 'isVendor'}
-                  direction={sortDirection}
-                  onClick={() => handleSort('isVendor')}
-                />
-              </TableHead>
-              <TableHead>
-                <SortButton
-                  label='Affiliated Vendor'
-                  active={sortKey === 'vendorName'}
-                  direction={sortDirection}
-                  onClick={() => handleSort('vendorName')}
-                />
-              </TableHead>
-              <TableHead>
-                <SortButton
-                  label='Recent Login Time'
-                  active={sortKey === 'recentLoginAt'}
-                  direction={sortDirection}
-                  onClick={() => handleSort('recentLoginAt')}
-                />
-              </TableHead>
-              <TableHead>
-                <SortButton
-                  label='Registration Time'
-                  active={sortKey === 'registeredAt'}
-                  direction={sortDirection}
-                  onClick={() => handleSort('registeredAt')}
-                />
-              </TableHead>
-              <TableHead>
-                <SortButton
-                  label='Status'
-                  active={sortKey === 'status'}
-                  direction={sortDirection}
-                  onClick={() => handleSort('status')}
-                />
-              </TableHead>
-              <TableHead className='pr-6'>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {sortedUsers.map((user) => (
-              <TableRow key={user.id} className='hover:bg-slate-50/80'>
-                <TableCell className='pl-6'>
+        <AdminSurface className='px-8 py-7'>
+          <div className='grid gap-5 md:grid-cols-3'>
+            <FilterField label='Name'>
+              <Input
+                value={draftFilters.name}
+                onChange={(event) => updateDraft('name', event.target.value)}
+                placeholder='Enter name'
+                className='h-11 rounded-xl'
+              />
+            </FilterField>
+            <FilterField label='Mobile'>
+              <Input
+                value={draftFilters.mobile}
+                onChange={(event) => updateDraft('mobile', event.target.value)}
+                placeholder='Enter mobile'
+                className='h-11 rounded-xl'
+              />
+            </FilterField>
+            <FilterField label='Email'>
+              <Input
+                value={draftFilters.email}
+                onChange={(event) => updateDraft('email', event.target.value)}
+                placeholder='Enter email'
+                className='h-11 rounded-xl'
+              />
+            </FilterField>
+            <FilterField label='Account'>
+              <Input
+                value={draftFilters.account}
+                onChange={(event) => updateDraft('account', event.target.value)}
+                placeholder='Enter account'
+                className='h-11 rounded-xl'
+              />
+            </FilterField>
+            <FilterField label='Platform Role'>
+              <Select
+                value={draftFilters.platformRole || 'all'}
+                onValueChange={(value) => updateDraft('platformRole', value === 'all' ? '' : value)}
+              >
+                <SelectTrigger className='h-11 w-full rounded-xl data-[size=default]:h-11'>
+                  <SelectValue placeholder='Select role' />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value='all'>All Roles</SelectItem>
+                  {platformRoleOptions.map((role) => (
+                    <SelectItem key={role} value={role}>
+                      {role}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </FilterField>
+            <FilterField label='Project Role'>
+              <Select
+                value={draftFilters.projectRole || 'all'}
+                onValueChange={(value) => updateDraft('projectRole', value === 'all' ? '' : value)}
+              >
+                <SelectTrigger className='h-11 w-full rounded-xl data-[size=default]:h-11'>
+                  <SelectValue placeholder='Select role' />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value='all'>All Roles</SelectItem>
+                  {projectRoleOptions.map((role) => (
+                    <SelectItem key={role} value={role}>
+                      {role}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </FilterField>
+          </div>
+
+          <div className='mt-6 flex flex-wrap items-end justify-between gap-4 border-t border-slate-100 pt-6'>
+            <div className='text-muted-foreground text-sm'>
+              Filter by identity, account information, and role scope.
+            </div>
+            <div className='flex flex-wrap justify-end gap-3'>
+              <Button
+                variant='outline'
+                className='h-10 rounded-xl px-5'
+                onClick={() => {
+                  setDraftFilters(emptyFilters);
+                  setAppliedFilters(emptyFilters);
+                  setHeaderRoleDraft('');
+                  setHeaderRoleApplied('');
+                  setSelectedIds([]);
+                }}
+              >
+                Reset
+              </Button>
+              <Button
+                className='bg-primary h-10 rounded-xl border-transparent px-5 text-white hover:bg-primary/90'
+                onClick={() => setAppliedFilters(draftFilters)}
+              >
+                Search
+              </Button>
+            </div>
+          </div>
+        </AdminSurface>
+
+        <AdminSurface className='overflow-hidden'>
+          <AdminSectionHeader
+            title='User Directory'
+            description={`${sortedUsers.length} users in the current result set`}
+            action={
+              <Button
+                variant='outline'
+                className='h-10 rounded-xl px-5 disabled:border-slate-200 disabled:bg-slate-50 disabled:text-slate-400 disabled:shadow-none'
+                disabled={selectedIds.length === 0}
+                onClick={handleBulkDisable}
+              >
+                Bulk Disable
+              </Button>
+            }
+          />
+
+          <Table className='min-w-[1660px]'>
+            <TableHeader className='bg-slate-50/80'>
+              <TableRow>
+                <TableHead className='w-16 pl-6'>
                   <Checkbox
                     className='size-5 rounded-[4px] border-slate-400 shadow-none data-[state=checked]:border-primary'
-                    checked={selectedIds.includes(user.id)}
-                    onCheckedChange={(checked) => toggleRowSelection(user.id, Boolean(checked))}
-                    aria-label={`Select ${user.name}`}
+                    checked={allVisibleSelected}
+                    onCheckedChange={(checked) => toggleSelectAll(Boolean(checked))}
+                    aria-label='Select all users'
                   />
-                </TableCell>
-                <TableCell>{user.sequence}</TableCell>
-                <TableCell>
-                  <div className='space-y-1'>
-                    <div className='text-foreground font-medium'>{user.name}</div>
-                    <div className='text-muted-foreground text-xs'>{user.id}</div>
-                  </div>
-                </TableCell>
-                <TableCell>{user.mobile}</TableCell>
-                <TableCell className='text-slate-600'>{user.email}</TableCell>
-                <TableCell className='font-mono text-[13px]'>{user.account}</TableCell>
-                <TableCell>{user.platformRole}</TableCell>
-                <TableCell>{user.projectRole}</TableCell>
-                <TableCell>{user.isVendor}</TableCell>
-                <TableCell>{user.vendorName}</TableCell>
-                <TableCell>{user.recentLoginAt}</TableCell>
-                <TableCell>{user.registeredAt}</TableCell>
-                <TableCell>
-                  <span
-                    className={cn(
-                      'inline-flex rounded-full px-2.5 py-1 text-xs font-medium',
-                      user.status === 'Enabled'
-                        ? 'bg-emerald-50 text-emerald-700'
-                        : 'bg-slate-100 text-slate-600'
-                    )}
-                  >
-                    {user.status}
-                  </span>
-                </TableCell>
-                <TableCell className='pr-6'>
-                  <div className='flex flex-wrap items-center gap-2'>
-                    <TableActionButton
-                      label='Disable user'
-                      icon={<Icons.circleX className='size-4' />}
-                      disabled={user.status === 'Disabled'}
-                      onClick={() => handleSingleDisable(user.id)}
-                    />
-                    <TableActionButton label='Edit user' icon={<Icons.edit className='size-4' />} />
-                    <TableActionButton
-                      label='View user'
-                      icon={<Icons.externalLink className='size-4' />}
-                    />
-                  </div>
-                </TableCell>
+                </TableHead>
+                <TableHead>
+                  <SortButton
+                    label='No.'
+                    active={sortKey === 'sequence'}
+                    direction={sortDirection}
+                    onClick={() => handleSort('sequence')}
+                  />
+                </TableHead>
+                <TableHead>
+                  <SortButton
+                    label='Name'
+                    active={sortKey === 'name'}
+                    direction={sortDirection}
+                    onClick={() => handleSort('name')}
+                  />
+                </TableHead>
+                <TableHead>
+                  <SortButton
+                    label='Mobile'
+                    active={sortKey === 'mobile'}
+                    direction={sortDirection}
+                    onClick={() => handleSort('mobile')}
+                  />
+                </TableHead>
+                <TableHead>
+                  <SortButton
+                    label='Email'
+                    active={sortKey === 'email'}
+                    direction={sortDirection}
+                    onClick={() => handleSort('email')}
+                  />
+                </TableHead>
+                <TableHead>
+                  <SortButton
+                    label='Account'
+                    active={sortKey === 'account'}
+                    direction={sortDirection}
+                    onClick={() => handleSort('account')}
+                  />
+                </TableHead>
+                <TableHead>
+                  <Popover open={roleFilterOpen} onOpenChange={setRoleFilterOpen}>
+                    <PopoverTrigger asChild>
+                      <button
+                        type='button'
+                        className='text-foreground hover:text-primary inline-flex items-center gap-1 text-left font-medium'
+                      >
+                        <span>Platform Role</span>
+                        <Icons.chevronsUpDown className='text-muted-foreground size-4' />
+                      </button>
+                    </PopoverTrigger>
+                    <PopoverContent className='w-72 rounded-2xl border border-border/80 p-4 shadow-sm'>
+                      <div className='space-y-4'>
+                        <Select
+                          value={headerRoleDraft || 'all'}
+                          onValueChange={(value) =>
+                            setHeaderRoleDraft(value === 'all' ? '' : value)
+                          }
+                        >
+                          <SelectTrigger className='h-11 w-full rounded-xl data-[size=default]:h-11'>
+                            <SelectValue placeholder='Select role' />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value='all'>All Roles</SelectItem>
+                            {platformRoleOptions.map((role) => (
+                              <SelectItem key={role} value={role}>
+                                {role}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <div className='flex justify-end gap-2'>
+                          <Button
+                            variant='ghost'
+                            onClick={() => {
+                              setHeaderRoleDraft(headerRoleApplied);
+                              setRoleFilterOpen(false);
+                            }}
+                          >
+                            Cancel
+                          </Button>
+                          <Button
+                            className='bg-primary border-transparent text-white hover:bg-primary/90'
+                            onClick={() => {
+                              setHeaderRoleApplied(headerRoleDraft);
+                              setRoleFilterOpen(false);
+                            }}
+                          >
+                            Confirm
+                          </Button>
+                        </div>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                </TableHead>
+                <TableHead>
+                  <SortButton
+                    label='Project Role'
+                    active={sortKey === 'projectRole'}
+                    direction={sortDirection}
+                    onClick={() => handleSort('projectRole')}
+                  />
+                </TableHead>
+                <TableHead>
+                  <SortButton
+                    label='Vendor User'
+                    active={sortKey === 'isVendor'}
+                    direction={sortDirection}
+                    onClick={() => handleSort('isVendor')}
+                  />
+                </TableHead>
+                <TableHead>
+                  <SortButton
+                    label='Affiliated Vendor'
+                    active={sortKey === 'vendorName'}
+                    direction={sortDirection}
+                    onClick={() => handleSort('vendorName')}
+                  />
+                </TableHead>
+                <TableHead>
+                  <SortButton
+                    label='Recent Login Time'
+                    active={sortKey === 'recentLoginAt'}
+                    direction={sortDirection}
+                    onClick={() => handleSort('recentLoginAt')}
+                  />
+                </TableHead>
+                <TableHead>
+                  <SortButton
+                    label='Registration Time'
+                    active={sortKey === 'registeredAt'}
+                    direction={sortDirection}
+                    onClick={() => handleSort('registeredAt')}
+                  />
+                </TableHead>
+                <TableHead>
+                  <SortButton
+                    label='Status'
+                    active={sortKey === 'status'}
+                    direction={sortDirection}
+                    onClick={() => handleSort('status')}
+                  />
+                </TableHead>
+                <TableHead className='pr-6'>Actions</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </AdminSurface>
-    </div>
+            </TableHeader>
+            <TableBody>
+              {sortedUsers.map((user) => (
+                <TableRow key={user.id} className='hover:bg-slate-50/80'>
+                  <TableCell className='pl-6'>
+                    <Checkbox
+                      className='size-5 rounded-[4px] border-slate-400 shadow-none data-[state=checked]:border-primary'
+                      checked={selectedIds.includes(user.id)}
+                      onCheckedChange={(checked) => toggleRowSelection(user.id, Boolean(checked))}
+                      aria-label={`Select ${user.name}`}
+                    />
+                  </TableCell>
+                  <TableCell>{user.sequence}</TableCell>
+                  <TableCell>
+                    <div className='space-y-1'>
+                      <div className='text-foreground font-medium'>{user.name}</div>
+                      <div className='text-muted-foreground text-xs'>{user.id}</div>
+                    </div>
+                  </TableCell>
+                  <TableCell>{user.mobile}</TableCell>
+                  <TableCell className='text-slate-600'>{user.email}</TableCell>
+                  <TableCell className='font-mono text-[13px]'>{user.account}</TableCell>
+                  <TableCell>{user.platformRole}</TableCell>
+                  <TableCell>{user.projectRole}</TableCell>
+                  <TableCell>{user.isVendor}</TableCell>
+                  <TableCell>{user.vendorName}</TableCell>
+                  <TableCell>{user.recentLoginAt}</TableCell>
+                  <TableCell>{user.registeredAt}</TableCell>
+                  <TableCell>
+                    <span
+                      className={cn(
+                        'inline-flex rounded-full px-2.5 py-1 text-xs font-medium',
+                        user.status === 'Enabled'
+                          ? 'bg-emerald-50 text-emerald-700'
+                          : 'bg-slate-100 text-slate-600'
+                      )}
+                    >
+                      {user.status}
+                    </span>
+                  </TableCell>
+                  <TableCell className='pr-6'>
+                    <div className='flex flex-wrap items-center gap-2'>
+                      <TableActionButton
+                        label='Disable user'
+                        icon={<Icons.circleX className='size-4' />}
+                        disabled={user.status === 'Disabled'}
+                        onClick={() => handleSingleDisable(user.id)}
+                      />
+                      <TableActionButton
+                        label='Edit user'
+                        icon={<Icons.edit className='size-4' />}
+                        onClick={() => openEditUser(user)}
+                      />
+                      <TableActionButton
+                        label='View user'
+                        icon={<Icons.externalLink className='size-4' />}
+                      />
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </AdminSurface>
+      </div>
+
+      <Dialog open={editUserOpen} onOpenChange={setEditUserOpen}>
+        <DialogContent className='gap-0 overflow-hidden rounded-2xl border-slate-200 p-0 shadow-xl sm:max-w-[760px]'>
+          <DialogHeader className='border-b border-slate-100 px-6 py-5'>
+            <DialogTitle className='text-[18px] font-semibold text-slate-900'>
+              Edit User
+            </DialogTitle>
+            <DialogDescription className='text-sm leading-6 text-slate-500'>
+              Update profile, role, vendor affiliation, and account status information.
+            </DialogDescription>
+          </DialogHeader>
+
+          {editUserForm ? (
+            <form className='space-y-6 px-6 py-6' onSubmit={handleEditUserSubmit}>
+              <div className='grid gap-5 md:grid-cols-2'>
+                <EditUserField label='Nickname'>
+                  <Input
+                    value={editUserForm.name}
+                    onChange={(event) => updateEditUserForm('name', event.target.value)}
+                    className='h-11 rounded-xl'
+                  />
+                </EditUserField>
+                <EditUserField label='Gender'>
+                  <Select
+                    value={editUserForm.gender}
+                    onValueChange={(value) => updateEditUserForm('gender', value)}
+                  >
+                    <SelectTrigger className='h-11 w-full rounded-xl data-[size=default]:h-11'>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {genderOptions.map((option) => (
+                        <SelectItem key={option} value={option}>
+                          {option}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </EditUserField>
+                <EditUserField label='Phone Number'>
+                  <Input
+                    value={editUserForm.mobile}
+                    onChange={(event) => updateEditUserForm('mobile', event.target.value)}
+                    className='h-11 rounded-xl'
+                  />
+                </EditUserField>
+                <EditUserField label='Email'>
+                  <Input
+                    type='email'
+                    value={editUserForm.email}
+                    onChange={(event) => updateEditUserForm('email', event.target.value)}
+                    className='h-11 rounded-xl'
+                  />
+                </EditUserField>
+                <EditUserField label='Account'>
+                  <Input
+                    value={editUserForm.account}
+                    onChange={(event) => updateEditUserForm('account', event.target.value)}
+                    className='h-11 rounded-xl'
+                  />
+                </EditUserField>
+                <EditUserField label='Platform Role'>
+                  <Select
+                    value={editUserForm.platformRole}
+                    onValueChange={(value) =>
+                      updateEditUserForm('platformRole', value as PlatformRole)
+                    }
+                  >
+                    <SelectTrigger className='h-11 w-full rounded-xl data-[size=default]:h-11'>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {platformRoleOptions.map((role) => (
+                        <SelectItem key={role} value={role}>
+                          {role}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </EditUserField>
+                <EditUserField label='Project Role'>
+                  <Select
+                    value={editUserForm.projectRole}
+                    onValueChange={(value) =>
+                      updateEditUserForm('projectRole', value as ProjectRole)
+                    }
+                  >
+                    <SelectTrigger className='h-11 w-full rounded-xl data-[size=default]:h-11'>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {projectRoleOptions.map((role) => (
+                        <SelectItem key={role} value={role}>
+                          {role}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </EditUserField>
+                <EditUserField label='Vendor User'>
+                  <Select
+                    value={editUserForm.isVendor}
+                    onValueChange={(value) =>
+                      updateEditUserForm('isVendor', value as UserRecord['isVendor'])
+                    }
+                  >
+                    <SelectTrigger className='h-11 w-full rounded-xl data-[size=default]:h-11'>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value='Yes'>Yes</SelectItem>
+                      <SelectItem value='No'>No</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </EditUserField>
+                <EditUserField label='Affiliated Vendor'>
+                  <Select
+                    value={editUserForm.vendorName === '-' ? 'none' : editUserForm.vendorName}
+                    disabled={editUserForm.isVendor === 'No'}
+                    onValueChange={(value) =>
+                      updateEditUserForm('vendorName', value === 'none' ? '-' : value)
+                    }
+                  >
+                    <SelectTrigger className='h-11 w-full rounded-xl data-[size=default]:h-11'>
+                      <SelectValue placeholder='Select vendor' />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value='none'>No affiliated vendor</SelectItem>
+                      {vendorOptions.map((vendor) => (
+                        <SelectItem key={vendor} value={vendor}>
+                          {vendor}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </EditUserField>
+                <EditUserField label='Status'>
+                  <Select
+                    value={editUserForm.status}
+                    onValueChange={(value) => updateEditUserForm('status', value as UserStatus)}
+                  >
+                    <SelectTrigger className='h-11 w-full rounded-xl data-[size=default]:h-11'>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value='Enabled'>Enabled</SelectItem>
+                      <SelectItem value='Disabled'>Disabled</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </EditUserField>
+                <EditUserField label='Recent Login Time'>
+                  <Input
+                    value={editUserForm.recentLoginAt}
+                    onChange={(event) => updateEditUserForm('recentLoginAt', event.target.value)}
+                    className='h-11 rounded-xl'
+                  />
+                </EditUserField>
+                <EditUserField label='Registration Time'>
+                  <Input
+                    value={editUserForm.registeredAt}
+                    onChange={(event) => updateEditUserForm('registeredAt', event.target.value)}
+                    className='h-11 rounded-xl'
+                  />
+                </EditUserField>
+              </div>
+
+              <DialogFooter className='border-t border-slate-100 pt-5'>
+                <Button
+                  type='button'
+                  variant='outline'
+                  className='h-10 rounded-xl px-5'
+                  onClick={() => setEditUserOpen(false)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type='submit'
+                  className='h-10 rounded-xl bg-primary px-5 text-white hover:bg-primary/90'
+                >
+                  Save
+                </Button>
+              </DialogFooter>
+            </form>
+          ) : null}
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={bulkCreateOpen} onOpenChange={setBulkCreateOpen}>
+        <DialogContent className='gap-0 overflow-hidden rounded-2xl border-slate-200 p-0 shadow-xl sm:max-w-[480px]'>
+          <DialogHeader className='border-b border-slate-100 px-6 py-5'>
+            <DialogTitle className='text-[18px] font-semibold text-slate-900'>
+              Bulk Create Users
+            </DialogTitle>
+            <DialogDescription className='text-sm leading-6 text-slate-500'>
+              Enter the number of accounts to create.
+            </DialogDescription>
+          </DialogHeader>
+
+          <form className='space-y-5 px-6 py-6' onSubmit={handleBulkCreateSubmit}>
+            <Input
+              id='bulk-create-count'
+              type='number'
+              min='1'
+              required
+              inputMode='numeric'
+              value={bulkCreateCount}
+              onChange={(event) => setBulkCreateCount(event.target.value)}
+              placeholder='Enter quantity'
+              className='h-11 rounded-xl'
+            />
+
+            <DialogFooter className='pt-2'>
+              <Button
+                type='button'
+                variant='outline'
+                className='h-10 rounded-xl px-5'
+                onClick={() => setBulkCreateOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                type='submit'
+                className='h-10 rounded-xl bg-primary px-5 text-white hover:bg-primary/90'
+              >
+                Confirm
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={bulkCreateResultOpen} onOpenChange={setBulkCreateResultOpen}>
+        <DialogContent className='gap-0 overflow-hidden rounded-2xl border-slate-200 p-0 shadow-xl sm:max-w-[640px]'>
+          <DialogHeader className='border-b border-slate-100 px-6 py-5'>
+            <DialogTitle className='text-[18px] font-semibold text-slate-900'>
+              Generated Account Information
+            </DialogTitle>
+          </DialogHeader>
+
+          <div className='max-h-[54vh] overflow-y-auto px-6 py-6'>
+            <div className='text-sm font-semibold text-slate-900'>
+              Generated account information:
+            </div>
+            <div className='mt-5 space-y-5'>
+              {generatedAccounts.map((account, index) => (
+                <div key={`${account.username}-${index}`} className='space-y-2'>
+                  <div className='text-sm font-semibold text-slate-900'>Account {index + 1}:</div>
+                  <div className='grid gap-1 text-sm leading-6 text-slate-700'>
+                    <div>
+                      Username:{' '}
+                      <span className='font-mono font-semibold text-slate-950'>
+                        {account.username}
+                      </span>
+                    </div>
+                    <div>
+                      Password:{' '}
+                      <span className='font-mono font-semibold text-slate-950'>
+                        {account.password}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <DialogFooter className='border-t border-slate-100 px-6 py-5'>
+            <Button
+              type='button'
+              className='h-10 rounded-xl bg-primary px-5 text-white hover:bg-primary/90'
+            >
+              Export Accounts
+            </Button>
+            <Button
+              type='button'
+              variant='outline'
+              className='h-10 rounded-xl px-5'
+              onClick={() => setBulkCreateResultOpen(false)}
+            >
+              Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+}
+
+function generateAccountCredentials(): GeneratedAccount {
+  return {
+    username: `user_${randomToken(8).toLowerCase()}`,
+    password: randomToken(8)
+  };
+}
+
+function randomToken(length: number) {
+  const characters = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789';
+  return Array.from({ length }, () =>
+    characters.charAt(Math.floor(Math.random() * characters.length))
+  ).join('');
+}
+
+function EditUserField({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <label className='space-y-2'>
+      <span className='block text-sm font-semibold text-slate-800'>{label}</span>
+      {children}
+    </label>
   );
 }
 

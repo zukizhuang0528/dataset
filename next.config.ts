@@ -21,6 +21,11 @@ const baseConfig: NextConfig = {
         protocol: 'https',
         hostname: 'clerk.com',
         port: ''
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+        port: ''
       }
     ]
   },
